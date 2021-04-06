@@ -17,6 +17,11 @@ repositories {
 - Add the following dependency to your project/app/build.gradle file.
 
 ```
+android {
+    packagingOptions {
+        exclude 'META-INF/*.kotlin_module'
+    }
+}
 dependencies {
     implementation 'com.github.prongbang:smartdialog:1.0.1'
 }

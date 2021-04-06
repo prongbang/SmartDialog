@@ -18,7 +18,7 @@ repositories {
 
 ```
 dependencies {
-    implementation 'com.github.prongbang:smartdialog:1.0.0'
+    implementation 'com.github.prongbang:smartdialog:1.0.1'
 }
 ```
 

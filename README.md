@@ -23,7 +23,7 @@ android {
     }
 }
 dependencies {
-    implementation 'com.github.prongbang:smartdialog:1.0.1'
+    implementation 'com.github.prongbang:smartdialog:1.0.2'
 }
 ```
 

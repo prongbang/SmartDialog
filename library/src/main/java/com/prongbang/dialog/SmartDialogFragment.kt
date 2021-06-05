@@ -10,12 +10,10 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.Window
-import android.widget.FrameLayout
 import androidx.annotation.DrawableRes
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.FragmentManager
-import kotlinx.android.synthetic.main.dialog_fragment_smart.*
+import com.prongbang.dialog.databinding.DialogFragmentSmartBinding
 
 class SmartDialogFragment : DialogFragment(), DialogInterface.OnKeyListener {
 
@@ -33,28 +31,29 @@ class SmartDialogFragment : DialogFragment(), DialogInterface.OnKeyListener {
 	private var onPositiveButtonClick: () -> Unit = {}
 	private var onNegativeButtonClick: () -> Unit = {}
 	private var supportFragmentManager: FragmentManager? = null
+	private var binding: DialogFragmentSmartBinding? = null
 
 	override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
 	                          savedInstanceState: Bundle?): View? {
-		return inflater.inflate(R.layout.dialog_fragment_smart, container, false)
+		binding = DialogFragmentSmartBinding.inflate(inflater, container, false)
+		return binding?.root
 	}
 
 	override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-		return activity?.let { activity ->
-			val view: View = FrameLayout(activity)
-			view.layoutParams = FrameLayout.LayoutParams(
-					ViewGroup.LayoutParams.MATCH_PARENT,
-					ViewGroup.LayoutParams.MATCH_PARENT
-			)
-			Dialog(activity).apply {
-				window?.requestFeature(Window.FEATURE_NO_TITLE)
-				window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-				window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT)
-				setContentView(view)
-				setOnKeyListener(this@SmartDialogFragment)
-				setCanceledOnTouchOutside(false)
-			}
-		} ?: super.onCreateDialog(savedInstanceState)
+		return super.onCreateDialog(savedInstanceState)
+				.apply {
+					setOnKeyListener(this@SmartDialogFragment)
+					setCanceledOnTouchOutside(false)
+				}
+	}
+
+	override fun onStart() {
+		super.onStart()
+		dialog?.apply {
+			window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT,
+					ViewGroup.LayoutParams.WRAP_CONTENT)
+			window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+		}
 	}
 
 	override fun onKey(dialog: DialogInterface?, keyCode: Int, event: KeyEvent?): Boolean {
@@ -95,7 +94,7 @@ class SmartDialogFragment : DialogFragment(), DialogInterface.OnKeyListener {
 			if (value == SmartIcon.NO_ICON) View.GONE else View.VISIBLE
 		}
 
-		view?.apply {
+		binding?.apply {
 			iconImage.visibility = isNoIcon(iconType)
 			titleText.visibility = isVisibility(title)
 			messageText.visibility = isVisibility(message)
@@ -106,7 +105,7 @@ class SmartDialogFragment : DialogFragment(), DialogInterface.OnKeyListener {
 	}
 
 	private fun mappingIcon() {
-		view?.apply {
+		binding?.apply {
 			when (iconType) {
 				SmartIcon.SUCCESS -> {
 					iconImage.setImageDrawable(
@@ -130,7 +129,7 @@ class SmartDialogFragment : DialogFragment(), DialogInterface.OnKeyListener {
 	}
 
 	private fun updateText() {
-		view?.apply {
+		binding?.apply {
 			titleText.text = title ?: ""
 			messageText.text = message ?: ""
 			messageSecondaryText.text = messageSecondary ?: ""
@@ -140,7 +139,7 @@ class SmartDialogFragment : DialogFragment(), DialogInterface.OnKeyListener {
 	}
 
 	private fun addListener() {
-		view?.apply {
+		binding?.apply {
 			positiveButton.setOnClickListener {
 				onPositiveButtonClick.invoke()
 				dismiss()
